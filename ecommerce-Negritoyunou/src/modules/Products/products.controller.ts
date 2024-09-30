@@ -1,12 +1,18 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards } from '@nestjs/common'
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, HttpCode, UsePipes, ValidationPipe, ParseUUIDPipe, HttpException, HttpStatus, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { ProductsService } from './products.service'
-import { Products } from './products.interface';
-import { Productsdto } from './dtos/products.dto';
+import { CreateProductsdto } from './dtos/create-product.dto';
 import { AuthGuard } from '../Auth/auth.guard';
+import { IsUUID } from 'class-validator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileUploadService } from '../file-upload/file-upload.service';
+import { ImageUploadPipe } from '../pipes/image-upload/image-upload.pipe';
 
 @Controller('products')
 export class ProductsController {
-    constructor (private readonly productsService: ProductsService) {}
+    constructor (
+        private readonly productsService: ProductsService,
+        private readonly fileUploadService: FileUploadService
+    ) {}
 
     @Get()
     async getProducts (
@@ -20,25 +26,44 @@ export class ProductsController {
     }
 
     @Get(':id')
-    getProductsById(@Param('id') id: string){
-        return this.productsService.getProductsById(Number(id));
-    }
+    async getProductsById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const product = await this.productsService.getProductsById(id);
+        if(!IsUUID(4, { each : true})){
+            throw new HttpException("Incorrect ID", HttpStatus.BAD_REQUEST)
+   }
+
+        if(!product){
+            throw new HttpException("Product Not Found", HttpStatus.NOT_FOUND)
+   }
+
+   return product;
+  }
 
     @UseGuards(AuthGuard)
     @Post()
-    createProducts(@Body() product: Productsdto){
-        return this.productsService.createProducts(product);
-    }
-
-    @UseGuards(AuthGuard)
-    @Put(':id')
-    updateProductsById(@Param('id') id: string, @Body() product: Productsdto) {
-        return this.productsService.updateProductsById(Number(id), product);
+    @UsePipes(new ValidationPipe())
+    async createProducts(@Body() product: CreateProductsdto){
+        return await this.productsService.createProducts(product);
     }
 
     @UseGuards(AuthGuard)
     @Delete(':id')
-    deleteProducts(@Param('id') id: string) {
-        return this.productsService.deleteProducts(Number(id));
+    async deleteProducts(@Param('id') id: string) {
+        return await this.productsService.deleteProducts(id);
+    }
+
+    @Post(':id/upload')
+    @HttpCode(200)
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadFile(
+        @Param('id') id: string, 
+        @UploadedFile(new ImageUploadPipe()) file: Express.Multer.File ) {
+        return this.productsService.uploadFile(file, id);
+    }
+
+    @Get(':id/image')
+    @HttpCode(200)
+    async getImage(@Param('id') id: string){
+        return this.fileUploadService.getUrl(id);
     }
 }

@@ -1,29 +1,47 @@
 import { Body, Injectable, Param } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
-import { User } from './user.interface';
-import { Userdto } from './dtos/user.dto';
+import { CreateUserdto } from './dtos/create-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './users.entity';
+import { Repository } from 'typeorm';
+import { UpdateUserdto } from './dtos/update-user.dto';
 
 @Injectable()
 export class UserService {
-    constructor(private usersRepository: UsersRepository) {}
+    constructor(
+        @InjectRepository(User)
+        private readonly usersRepository: Repository<User>  
+    ) {}
 
-    getUsers(page: number, limit: number) {
-        return this.usersRepository.getUsers(page, limit);
+    async getUsers(page: number, limit: number) {
+      const skip = (page - 1) * limit
+        return await this.usersRepository.find({
+          take: limit,
+          skip: skip,
+        });
     }
 
-    getUserById(id: number) {
-        return this.usersRepository.getUserById(id);
+    getUserById(id: string): Promise<User> {
+        return this.usersRepository.findOneBy({ id });
     }
 
-    createUser(user: Omit<Userdto, 'id'>):Promise<{id : number}> {
-        return this.usersRepository.createUser(user);
+    async createUser(user: CreateUserdto): Promise<User> {
+      const newUser = this.usersRepository.create(user);
+        return await this.usersRepository.save(newUser);
     }
 
-    updateUserById(id: number, user: Userdto): Promise<number> {
-        return this.usersRepository.updateUserById(id, user);
+    async updateUserById(id: string, user: UpdateUserdto): Promise<User> {
+        const userFind = await this.usersRepository.findOneBy({ id })
+        if(!userFind){
+          throw new Error('User not found')
+        }
+          await this.usersRepository.update(id, user);
+          return await this.usersRepository.findOneBy({ id })
       }
+
+
       
-      deleteUser(id: number): Promise<number> {
-        return this.usersRepository.deleteUser(id);
+      async deleteUser(id: string): Promise<{id: string}> {
+        await this.usersRepository.delete(id);
+        return { id };
       }
 }

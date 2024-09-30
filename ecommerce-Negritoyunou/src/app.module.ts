@@ -1,19 +1,36 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './modules/Auth/auth.module';
-import { AuthService } from './modules/Auth/auth.service';
-import { AuthController } from './modules/Auth/auth.controller';
 import { ProductsModule } from './modules/Products/products.module';
-import { ProductsService } from './modules/Products/products.service';
-import { ProductsController } from './modules/Products/products.controller';
 import { UserModule } from './modules/Users/users.module';
-import { UserService } from './modules/Users/users.service';
-import { UserController } from './modules/Users/users.controller';
-import { UsersRepository } from './modules/Users/users.repository';
-import { ProductsRepository } from './modules/Products/products.repository';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { postgresDataSourceConfig } from './config/data-source';
+import { CategoriesModule } from './modules/Categories/categories.module';
+import { OrdersModule } from './modules/Orders/orders.module';
+import { OrderDetailsModule } from './modules/OrderDetails/orderDetails.module';
+import { SeedModule } from './seeds/seeds.module';
 
 @Module({
-  imports: [UserModule, AuthModule, ProductsModule],
-  controllers: [UserController, AuthController, ProductsController],
-  providers: [UserService, AuthService, ProductsService, UsersRepository, ProductsRepository],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [postgresDataSourceConfig],
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => (
+        configService.get('postgres')
+      )
+    }),
+    UserModule,
+    AuthModule, 
+    ProductsModule,
+    CategoriesModule,
+    OrdersModule,
+    OrderDetailsModule,
+    SeedModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
