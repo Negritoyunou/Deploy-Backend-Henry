@@ -12,6 +12,10 @@ export class UserService {
         private readonly usersRepository: Repository<User>  
     ) {}
 
+    async findAll(){
+      return this.usersRepository.find()
+    }
+
     async getUsers(page: number, limit: number) {
       const skip = (page - 1) * limit
         return await this.usersRepository.find({
@@ -43,5 +47,9 @@ export class UserService {
       async deleteUser(id: string): Promise<{id: string}> {
         await this.usersRepository.delete(id);
         return { id };
+      }
+
+      async findByEmail(email: string){
+        return this.usersRepository.findOne({ where: { email: email }});
       }
 }

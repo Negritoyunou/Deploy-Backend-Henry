@@ -10,7 +10,7 @@ export class ImageUploadPipe implements PipeTransform {
         'image/webp',
     ];
 
-    private readonly maxSizeInBytes = 200; //10MB
+    private readonly maxSizeInBytes = 200000; //200KB
 
     transform(file: Express.Multer.File) {
         if(!file){

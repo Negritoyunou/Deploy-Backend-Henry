@@ -6,11 +6,17 @@ import { CategoriesSeed } from './seeds/categories/categories.seed';
 import { ProductsSeed } from './seeds/products/products.seed';
 import { log } from 'console';
 import { SeedModule } from './seeds/seeds.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   
   const app = await NestFactory.create(AppModule);
   app.use(LoggerGlobal)
+
+  const swaggerConfig = new DocumentBuilder().setTitle('Nest PT21A').setDescription('App for cohort for M4 backend').addBearerAuth().setVersion('1.0').build()
+  const document = SwaggerModule.createDocument(app, swaggerConfig)
+  SwaggerModule.setup('docs', app, document);
+
   const categoriesSeed = app.select(SeedModule).get(CategoriesSeed);
   await categoriesSeed.seed();
 

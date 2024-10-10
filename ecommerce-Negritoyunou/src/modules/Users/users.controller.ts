@@ -3,12 +3,21 @@ import { UserService } from './users.service';
 import { User } from './user.interface';
 import { CreateUserdto } from './dtos/create-user.dto';
 import { AuthGuard } from '../Auth/auth.guard';
+import { RolesGuard } from 'src/guards/roles/roles.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('users')
 @Controller('users')
 export class UserController {
     constructor (
         private readonly userService: UserService
     ) {}
+
+    @Get()
+    async findAll(){
+        return this.userService.findAll()
+    }
 
     @UseGuards(AuthGuard)
     @Get('page')
@@ -40,6 +49,7 @@ export class UserController {
     }
 
     @UseGuards(AuthGuard)
+    @UseGuards(RolesGuard)
     @Delete(':id')
     deleteUser(@Param('id') id: string) {
         return this.userService.deleteUser(id);

@@ -1,28 +1,22 @@
-import { Body, Controller, Get, Post, HttpException, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, Post, HttpException, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { SignInAuthDto } from './dto/signin-auth.dto';
+import { SignUpAuthDto } from './dto/signup-auth.dto';
+import { UserResponseDto } from '../Users/dtos/response-user.dto';
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    // @Get()
-    // getAuth(): string {
-    //     return this.authService.getAuth();
-    // }
+    @Post('signin')
+    signIn(@Body() credentials: SignInAuthDto){
+        return this.authService.signIn(credentials)
+    }
 
-    // @Post('signin')
-    // async signin(@Body() body: { email: string; password: string }) {
-    //     const { email, password } = body;
-
-    //     if (!email || !password) {
-    //         throw new HttpException('Email y password son requeridos', HttpStatus.BAD_REQUEST);
-    //     }
-
-    //     try {
-    //         const result = await this.authService.loginAuth(email, password);
-    //         return result;
-    //     } catch (error) {
-    //         throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
-    //     }
-    // }
+    @Post('signup')
+    @HttpCode(HttpStatus.CREATED)
+    async signUp(@Body() signUpUser: SignUpAuthDto){
+       const user = await this.authService.signUp(signUpUser);
+       return new UserResponseDto(user);
+    }
 }

@@ -1,10 +1,21 @@
 import { DataSource, DataSourceOptions } from "typeorm";
 import * as dotenv from 'dotenv';
 import { registerAs } from "@nestjs/config";
+import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
+
 
 dotenv.config({
     path: '.env.development',
 });
+
+
+const SqliteTestDataSourceOptions: DataSourceOptions = {
+    type: 'sqlite',
+    database: ':memory:',
+    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    synchronize: true,
+    dropSchema: true,
+};
 
 const PostgresDataSourceOptions: DataSourceOptions = {
     type: 'postgres',
@@ -22,9 +33,17 @@ const PostgresDataSourceOptions: DataSourceOptions = {
     // ssl: true,
 }
 
+
 export const postgresDataSourceConfig = registerAs(
     'postgres',
     () => PostgresDataSourceOptions,
 );
 
+export const sqliteDataSourceConfig = registerAs(
+    'sqlite',
+    () => SqliteTestDataSourceOptions,
+);
+
+
 export const PostgresDataSource = new DataSource(PostgresDataSourceOptions);
+export const SqliteDataSource = new DataSource(SqliteTestDataSourceOptions);
