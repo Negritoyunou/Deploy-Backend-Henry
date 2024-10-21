@@ -1,4 +1,6 @@
-import { IsEmail, IsNotEmpty, Length, IsString, Matches } from "class-validator";
+import { IsEmail, IsNotEmpty, Length, IsString, Matches, IsOptional } from "class-validator";
+import { Role } from "../enums/role.enum";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class SignUpAuthDto{
 
@@ -10,7 +12,6 @@ export class SignUpAuthDto{
     @IsNotEmpty()
     @IsEmail()
     email: string;
-
 
     @Matches(
         /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[=!@#$%^&])[A-Za-z\d=!@#$%^&]{8,15}$/,
@@ -33,17 +34,21 @@ export class SignUpAuthDto{
 
     @IsNotEmpty()
     @IsString()
+    @IsOptional()
     @Length(5, 20)
     country?: string;
 
     @IsNotEmpty()
     @IsString()
     @Length(3, 80)
-    address: string ; 
+    address: string ;
 
     @IsString()
+    @IsOptional()
     @Length(5, 20)
     city?: string;
+
+    administrador: string = Role.User
 
     constructor(partial: Partial<SignUpAuthDto>){
         Object.assign(this, partial);

@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Products } from './products.entity';
 import { Repository } from 'typeorm';
-import { CreateProductsdto } from './dtos/create-product.dto';
+import { CreateProductsdto } from './dto/create-product.dto';
 import { UploadFileDto } from '../file-upload/dto/upload-file.dto';
 import { FileUploadService } from '../file-upload/file-upload.service';
+import { UpdateProductsDto } from './dto/update-product.dto';
+
 
 
 
@@ -32,6 +34,15 @@ export class ProductsService {
         const newProduct = this.productsRepository.create(product)
         return await this.productsRepository.save(newProduct);
     }
+
+    async updateProductById(id: string, updateProductById: UpdateProductsDto){
+      const productFinded = await this.productsRepository.findOneBy({ id })
+      if(!productFinded){
+        throw new Error('Product not found')
+      }
+      await this.productsRepository.update(id, updateProductById)
+      return await this.productsRepository.findOneBy({ id })
+    }
       
     async deleteProducts(id: string): Promise<{ id: string }>{
       await this.productsRepository.delete(id);
@@ -40,12 +51,40 @@ export class ProductsService {
 
     async buyProducts(id: string){
       const product = await this.productsRepository.findOneBy({ id });
+
+      if(!product){
+        console.log('Producto no encontrado para el ID: ', id);
+        throw new Error('Product not found')
+      }
+
+      // Verifica el stock del producto
+      console.log('Stock del producto antes de la compra:', product.stock);
+
       if(product.stock === 0) {
         throw new Error('Out of stock');
       }
 
+      // Verifica los valores antes de realizar el update
+      console.log('Actualizando stock del producto ID:', id, 'Nuevo stock:', product.stock - 1);
+
+      await this.productsRepository.update( id , {
+        stock: product.stock - 1
+      });
+
       console.log('Product bought successfully');
       return product.price;
+    }
+
+    async updateProduct(id: string, updateProductsDto: UpdateProductsDto){
+      const producto = this.productsRepository.findOneBy({ id })
+
+      if(!producto){
+        return null
+      }
+      
+      await this.productsRepository.update(id, updateProductsDto)
+
+      return await this.productsRepository.findOneBy({ id })
     }
 
     async uploadFile(file: UploadFileDto, id: string){

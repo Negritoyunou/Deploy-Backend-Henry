@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Order } from '../Orders/orders.entity'; 
+import { Order } from '../orders/orders.entity'; 
 import { v4 as uuid } from 'uuid';
 import { Role } from './enums/role.enum';
 
@@ -21,13 +21,13 @@ export class User {
   phone: string;
 
   @Column({ nullable: true })
-  country: string;
+  country?: string;
 
   @Column()
   address: string;
 
   @Column({ nullable: true })
-  city: string;
+  city?: string;
 
   @OneToMany(() => Order, (order) => order.user) 
   orders: Order[];

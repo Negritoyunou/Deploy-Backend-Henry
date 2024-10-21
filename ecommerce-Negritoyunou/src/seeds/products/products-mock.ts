@@ -8,7 +8,7 @@ export const productsMock = [{
   {
     "name": "Samsung Galaxy S23",
     "description": "The best smartphone in the world",
-    "price": 150.0,
+    "price": 150.00,
     "stock": 12,
     "category": "smartphone"
   },
@@ -36,7 +36,7 @@ export const productsMock = [{
   {
     "name": "Acer Predator",
     "description": "The best monitor in the world",
-    "price": 150.0,
+    "price": 150.00,
     "stock": 12,
     "category": "monitor"
   },

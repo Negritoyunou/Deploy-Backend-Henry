@@ -4,7 +4,7 @@ import { ProductsService } from './products.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Products } from './products.entity';
 import { FileUploadService } from '../file-upload/file-upload.service';
-import { CloudinaryService } from '../Service/Cloudinary/cloudinary.service';
+import { CloudinaryService } from '../service/cloudinary/cloudinary.service';
 import { FileUploadModule } from '../file-upload/file-upload.module';
 
 @Module({

@@ -1,6 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString, Length } from "class-validator";
 
-
 export class CreateProductsdto {
 
     @IsString()
@@ -12,17 +11,15 @@ export class CreateProductsdto {
     @IsNotEmpty()
     description: string;
 
-    @IsNumber({ maxDecimalPlaces: 2 })
     @IsNotEmpty()
+    @IsNumber()
     price: number;
 
-    @IsNumber()
     @IsNotEmpty()
+    @IsNumber()
     stock: number;
 
     @IsString()
     imgUrl?: string;
-
-    category_id?: string;
 
 }

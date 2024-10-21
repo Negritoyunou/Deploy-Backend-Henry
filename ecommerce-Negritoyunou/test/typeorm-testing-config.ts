@@ -1,4 +1,3 @@
-import { registerAs } from "@nestjs/config";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 export const typeOrmTestConfig: TypeOrmModuleOptions = {

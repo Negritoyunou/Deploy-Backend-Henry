@@ -1,7 +1,6 @@
 import { DataSource, DataSourceOptions } from "typeorm";
 import * as dotenv from 'dotenv';
 import { registerAs } from "@nestjs/config";
-import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 
 dotenv.config({
@@ -28,7 +27,7 @@ const PostgresDataSourceOptions: DataSourceOptions = {
     logging: false,
     dropSchema: true,
     entities: ['dist/**/*.entity{.ts,.js}'],
-    migrations: ['dist/migration/*{.ts, .js}'],
+    migrations: ['dist/migration/*{.ts,.js}'],
     subscribers: [],
     // ssl: true,
 }

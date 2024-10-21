@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, HttpException, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignInAuthDto } from './dto/signin-auth.dto';
-import { SignUpAuthDto } from './dto/signup-auth.dto';
-import { UserResponseDto } from '../Users/dtos/response-user.dto';
+import { SignInAuthDto } from '../users/dto/signin-user.dto';
+import { SignUpAuthDto } from '../users/dto/signup-user.dto';
+import { UserResponseDto } from '../users/dto/response-user.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}

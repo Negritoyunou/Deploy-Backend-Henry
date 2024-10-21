@@ -1,9 +1,9 @@
-import { OrderDetails } from "src/modules/OrderDetails/orderdetails.entity";
+import { OrderDetails } from "src/modules/orderdetails/orderdetails.entity";
 
 export class OrderResponseDto{
     id: string;
     price: number;
-    products: object[];
+    products: object;
     order: {
         id: string;
         date: Date;

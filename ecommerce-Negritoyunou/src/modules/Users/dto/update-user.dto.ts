@@ -1,5 +1,6 @@
+import { ApiProperty } from "@nestjs/swagger";
 export class UpdateUserdto{
-    //id?: number;
+
     email?: string;
     name?: string;
     address?: string;

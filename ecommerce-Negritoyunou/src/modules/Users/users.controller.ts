@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, HttpCode, HttpStatus, ParseUUIDPipe, HttpException } from '@nestjs/common';
 import { UserService } from './users.service';
-import { User } from './user.interface';
-import { CreateUserdto } from './dtos/create-user.dto';
-import { AuthGuard } from '../Auth/auth.guard';
+import { IsUUID } from 'class-validator';
+import { CreateUserdto } from './dto/create-user.dto';
+import { AuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UpdateUserdto } from './dto/update-user.dto';
+import { Role } from './enums/role.enum';
+import { Roles } from 'src/decorators/role-decorator';
+
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -15,8 +19,11 @@ export class UserController {
     ) {}
 
     @Get()
+    @UseGuards(AuthGuard, RolesGuard)
+    @HttpCode(200)
+    @Roles(Role.Admin)
     async findAll(){
-        return this.userService.findAll()
+        return await this.userService.findAll()
     }
 
     @UseGuards(AuthGuard)
@@ -33,24 +40,32 @@ export class UserController {
 
     @UseGuards(AuthGuard)
     @Get(':id')
-    getUserById(@Param('id') id: string){
+    @HttpCode(HttpStatus.OK)
+    getUserById(@Param('id', new ParseUUIDPipe()) id: string){
+        if(!IsUUID(4, { each : true})){
+            throw new HttpException("Incorrect ID", HttpStatus.BAD_REQUEST)
+   }
+
         return this.userService.getUserById(id);
     }
 
     @Post()
+    @HttpCode(HttpStatus.CREATED)
     async createUser(@Body() user: CreateUserdto){
         return await this.userService.createUser(user);
     }
 
     @UseGuards(AuthGuard)
     @Put(':id')
-    updateUserById(@Param('id') id: string, @Body() user: CreateUserdto) {
+    @HttpCode(HttpStatus.OK)
+    updateUserById(@Param('id') id: string, @Body() user: UpdateUserdto) {
         return this.userService.updateUserById(id, user);
     }
 
-    @UseGuards(AuthGuard)
-    @UseGuards(RolesGuard)
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin)
     @Delete(':id')
+    @HttpCode(HttpStatus.OK)
     deleteUser(@Param('id') id: string) {
         return this.userService.deleteUser(id);
     }

@@ -1,8 +1,8 @@
-import { IsNotEmpty, IsString, Length, IsEmail } from "class-validator";
-
+import { ApiProperty } from "@nestjs/swagger";
 export class UserResponseDto{
+
     id: string;
-    name: string; 
+    name: string;
     email: string;
     phone: string;
     country?: string;

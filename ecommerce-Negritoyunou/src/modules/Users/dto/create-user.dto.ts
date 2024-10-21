@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, Length, Matches, IsEmail } from "class-validator";
+import { IsString, IsNotEmpty, Length, Matches, IsEmail, IsOptional } from "class-validator";
+import { Role } from "../enums/role.enum";
 
 export class CreateUserdto {
 
@@ -65,6 +66,7 @@ export class CreateUserdto {
     })
     @IsNotEmpty()
     @IsString()
+    @IsOptional()
     @Length(5, 20)
     country?: string;
 
@@ -84,8 +86,11 @@ export class CreateUserdto {
         required: false,
     })
     @IsString()
+    @IsOptional()
     @Length(5, 20)
     city?: string;
+
+    administrador: string = Role.User;
 
     orders_id? : string;
 }

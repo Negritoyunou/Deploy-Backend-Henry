@@ -4,7 +4,6 @@ import { LoggerGlobal } from './middlewares/logger.middleware';
 import 'reflect-metadata';
 import { CategoriesSeed } from './seeds/categories/categories.seed';
 import { ProductsSeed } from './seeds/products/products.seed';
-import { log } from 'console';
 import { SeedModule } from './seeds/seeds.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 

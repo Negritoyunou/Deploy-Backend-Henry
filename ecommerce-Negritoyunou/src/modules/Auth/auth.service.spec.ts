@@ -1,11 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthService } from "./auth.service";
-import { UserService } from "../Users/users.service";
-import { User } from "../Users/users.entity";
+import { UserService } from "../users/users.service";
+import { User } from "../users/users.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { JwtService } from "@nestjs/jwt";
-import { SignUpAuthDto } from "./dto/signup-auth.dto";
-import { Role } from "../Users/enums/role.enum";
+import { SignUpAuthDto } from "../users/dto/signup-user.dto";
+import { Role } from "../users/enums/role.enum";
 
 describe('AuthService', () =>{
     let services: AuthService;

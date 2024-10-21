@@ -1,28 +1,32 @@
-# FROM node:18-alpine AS development
+FROM node:20.18-alpine3.19 AS development
 
-# WORKDIR /usr/src/app
+WORKDIR /usr/src/app
 
-# COPY package*.json ./
+COPY package*.json ./
 
-# RUN npm ci
+RUN npm ci
 
-# COPY . . 
+COPY . . 
 
-# FROM node:18-alpine AS build
+FROM node:20.18-alpine3.19 AS build
 
-# COPY --from=development /usr/src/app/node_modules ./node_modules
+WORKDIR /usr/src/app
 
-# COPY . .
+COPY package*.json ./
 
-# RUN npm run build
+COPY --from=development /usr/src/app/node_modules ./node_modules
 
-# RUN npm ci --only=production && npm cache clean --force
+COPY . .
 
-# FROM node:18-alpine AS production
+RUN npm run build
 
-# COPY --from=build /usr/src/app/node_modules ./node_modules
-# COPY --from=build /usr/src/app/dist ./dist
+RUN npm ci --only=production && npm cache clean --force
 
-# EXPOSE 3000 
+FROM node:20.18-alpine3.19 AS production
 
-# CMD ["node", "dist/main.js"]
+COPY --from=build /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/dist ./dist
+
+EXPOSE 3000 
+
+CMD ["node", "dist/main.js"]
